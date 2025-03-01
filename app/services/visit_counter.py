@@ -1,6 +1,6 @@
 from typing import Dict, List, Any
 import asyncio
-import logging
+from app.logger import logger
 from datetime import datetime
 from ..core.redis_manager import RedisManager
 
@@ -8,8 +8,8 @@ from ..core.redis_manager import RedisManager
 class VisitCounterService:
     def __init__(self):
         """Initialize the visit counter service with Redis manager"""
-        self.redis_manager = RedisManager()
         # self.visit_counts: Dict[str, int] = {}
+        self.redis_manager = RedisManager()
 
     async def increment_visit(self, page_id: str) -> None:
         """
@@ -26,8 +26,9 @@ class VisitCounterService:
 
         try:
             await self.redis_manager.increment(f"visit:{page_id}")
+            logger.info("successfully incremented visit count")
         except Exception as e:
-            logging.error(f"Error incrementing visit count: {str(e)}")
+            logger.error(f"Error incrementing visit count: {str(e)}")
             raise
 
     async def get_visit_count(self, page_id: str) -> int:
@@ -50,5 +51,5 @@ class VisitCounterService:
             count = await self.redis_manager.get(f"visit:{page_id}")
             return count or 0
         except Exception as e:
-            logging.error(f"Error getting visit count: {str(e)}")
+            logger.error(f"Error getting visit count: {str(e)}")
             raise

@@ -1,6 +1,6 @@
 import redis
 from typing import Dict, List, Optional, Any
-import logging
+from app.logger import logger
 from .consistent_hash import ConsistentHash
 from .config import settings
 
@@ -61,7 +61,7 @@ class RedisManager:
             client = await self.get_connection(key)
             return client.incrby(key, amount)
         except Exception as e:
-            logging.error(f"Redis increment error: {str(e)}")
+            logger.error(f"Redis increment error: {str(e)}")
             raise
 
     async def get(self, key: str) -> Optional[int]:
@@ -83,5 +83,5 @@ class RedisManager:
             value = client.get(key)
             return int(value) if value else None
         except Exception as e:
-            logging.error(f"Redis get error: {str(e)}")
+            logger.error(f"Redis get error: {str(e)}")
             raise
